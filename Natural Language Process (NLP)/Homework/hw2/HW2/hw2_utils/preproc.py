@@ -1,4 +1,5 @@
 from collections import Counter
+from itertools import dropwhile
 
 import pandas as pd
 import numpy as np
@@ -12,7 +13,12 @@ def bag_of_words(text):
     :returns: a Counter representing a single document's word counts
     :rtype: Counter
     """
-    raise NotImplementedError
+    
+    count = Counter()
+    for word in text.split():
+        count[word] += 1
+        
+    return count
 
 # deliverable 1.2
 def aggregate_counts(bags_of_words):
@@ -23,7 +29,12 @@ def aggregate_counts(bags_of_words):
     :returns: an aggregated bag of words for the whole corpus
     :rtype: Counter
     """
-    raise NotImplementedError
+    count = Counter()
+    for bag in bags_of_words:
+        count += bag
+       
+    return count
+    
     
 # deliverable 1.3
 def compute_oov(bow1, bow2):
@@ -35,7 +46,9 @@ def compute_oov(bow1, bow2):
     :returns: the set of words in bow1, but not in bow2
     :rtype: set
     """
-    raise NotImplementedError
+    
+    return set(bow1) - set(bow2)
+    
     
     
 # deliverable 1.4
@@ -49,8 +62,18 @@ def prune_vocabulary(training_counts, target_data, min_counts):
     :returns: list of words in pruned vocabulary
     :rtype list of Counters, set
     """
-    raise NotImplementedError
+    for key, count in dropwhile(lambda training_key_count: training_key_count[1] 
+                                >= min_counts,
+                                training_counts.most_common()):
+        del training_counts[key]
+        
+        
+    result_data = list()
+    for counter in target_data:
+        result_data.append(counter & training_counts)
     
+    return result_data, training_counts
+        
 
 # Helper functions
 

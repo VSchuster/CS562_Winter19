@@ -1,4 +1,5 @@
 from hw2_utils.constants import OFFSET
+from collections import defaultdict
 import numpy as np
 
 # HELPER FUNCTION
@@ -24,7 +25,13 @@ def make_feature_vector(base_features, label):
     :returns dict of features, f(x,y)
     :rtype: dict
     """
-    raise NotImplementedError
+    result = dict()
+    for key, value in base_features.items():
+        result[(label, key)] = value
+    
+    result[(label, OFFSET)] = 1
+    return result
+    
     
 # deliverable 2.2
 def predict(base_features, weights, labels):
@@ -37,7 +44,22 @@ def predict(base_features, weights, labels):
     :returns: top-scoring label, plus the scores of all labels
     :rtype: string, dict
     """
-    raise NotImplementedError
+    all_scores = dict()
+    
+    for label in labels:
+        feature_vector = make_feature_vector(base_features, label)
+        for key, value in feature_vector.items():
+            if key in weights:
+                if label in all_scores:
+                    all_scores[label] += feature_vector[key] * weights[key]
+                else:
+                    all_scores[label] = 0.0000
+                
+    
+    return argmax(all_scores), all_scores
+    
+    
+    
     
 def predict_all(x, weights, labels):
     """

@@ -18,7 +18,14 @@ def get_corpus_counts(x,y,label):
     :rtype: defaultdict
 
     """
-    raise NotImplementedError
+    corpus_counts = defaultdict(lambda: 0)
+    
+    for index, value in enumerate(y):
+        if value == label:
+            for key in x[index]:
+                corpus_counts[key] += x[index][key]
+    
+    return corpus_counts
 
 
 # deliverable 3.2
@@ -35,7 +42,23 @@ def estimate_pxy(x,y,label,smoothing,vocab):
     :rtype: defaultdict of log probabilities per word
 
     """
-    raise NotImplementedError
+    total_words = 0
+    estimate = defaultdict(float)
+    corpus_counts = get_corpus_counts(x,y,label)
+    for key in corpus_counts:
+        total_words += corpus_counts[key]
+    
+    bottom = total_words + len(vocab)
+    
+    for word in vocab:
+        if word in corpus_counts:
+            estimate[word] = np.log((corpus_counts[word] + smoothing) / bottom)
+        else:
+            estimate[word] = np.log(smoothing / bottom)
+    
+    return estimate
+        
+    
     
 
 # deliverable 3.3
@@ -52,10 +75,24 @@ def estimate_nb(x,y,smoothing):
     """
     
     labels = set(y)
-    counts = defaultdict(float)
-    doc_counts = defaultdict(float)
+    #counts = defaultdict(float)
+    #doc_counts = defaultdict(float)
+    weights = defaultdict(float)
     
-    raise NotImplementedError
+    vocab = set()
+    for counter in x:
+        vocab = set(counter) | vocab
+    
+    for label in labels:
+        current_estimates = estimate_pxy(x,y,label,smoothing,vocab)
+        for key in current_estimates:
+            weights[(label, key)] = current_estimates[key]
+    
+    return weights
+            
+        
+    
+    
     
 
 # deliverable 3.4

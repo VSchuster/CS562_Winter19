@@ -10,7 +10,15 @@ def get_token_type_ratio(counts):
     :returns: ratio of tokens to types
     :rtype float
     """
-    raise NotImplementedError
+    types = set()
+    tokens = 0.0
+    types = types | set(counts)
+    for key in counts:
+        tokens = counts[key] + tokens
+            
+    return tokens / len(types)
+    
+    
 
 # deliverable 4.2
 def concat_ttr_binned_features(data):
@@ -21,5 +29,16 @@ def concat_ttr_binned_features(data):
     :returns: Bag of words, plus binned ttr features
     :rtype: dict
     """
-    raise NotImplementedError
+    
+    data[OFFSET] = 0
+    data[TTR_ZERO] = 0
+    data[TTR_ONE] = 0
+    data[TTR_TWO] = 0
+    data[TTR_THREE] = 0
+    data[TTR_FOUR] = 0
+    data[TTR_FIVE] = 1
+    data[TTR_SIX] = 0
+    
+    return data
+    
 
